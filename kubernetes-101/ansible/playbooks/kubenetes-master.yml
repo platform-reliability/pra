@@ -1,0 +1,12 @@
+---
+- name: initial kubernetes cluster
+  hosts: k8s-master
+  vars:
+    hostname: "demo-master"
+    IP_master: "{{ hostvars[groups['k8s-master'][0]]['inventory_hostname'] }}"
+  roles:
+    - set_hostname
+    - kubernetes_install
+    - kubernetes_init_cluster
+    - get_certificate
+

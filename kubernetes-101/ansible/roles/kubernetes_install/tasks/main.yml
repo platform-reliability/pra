@@ -1,0 +1,21 @@
+---
+- name: Install docker
+  command: bash -c "sudo apt-get update && sudo apt install docker.io -y"
+
+- name: start docker system
+  command: bash -c "sudo systemctl enable docker"
+
+- name: Add the Kubernetes signing key
+  command: bash -c "curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add"
+
+- name: Add Xenial Kubernetes Repository
+  command: bash -c "sudo apt-add-repository 'deb http://apt.kubernetes.io/ kubernetes-xenial main'"
+
+- name: Install Kubeadm
+  command: bash -c "sudo apt install kubeadm -y"
+
+- name: Disable swap memory
+  command: bash -c "sudo swapoff -a"
+
+- name: Install nfs common
+  command: bash -c "sudo apt-get install nfs-common -y"

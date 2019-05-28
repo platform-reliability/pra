@@ -1,0 +1,21 @@
+---
+- name: get certificate authority data
+  command: bash -c "awk '/certificate-authority-data/' .kube/config | awk '{ print $2 }'"
+  register: certificate_authority_data
+
+- name: get client certificate data
+  command: bash -c "awk '/client-certificate-data/' .kube/config | awk '{ print $2 }'"
+  register: client_certificate_data
+
+- name: get client key data
+  command: bash -c "awk '/client-key-data/' .kube/config | awk '{ print $2 }'"
+  register: client_key_data
+
+- name: save certificate authority data
+  local_action: copy content="{{ certificate_authority_data.stdout }}" dest="../k8s/dev/certificate/pronto_world_certificate_authority_data"
+
+- name: save client certificate data
+  local_action: copy content="{{ client_certificate_data.stdout }}" dest="../k8s/dev/certificate/pronto_world_client_certificate_data"
+
+- name: save client key data
+  local_action: copy content="{{ client_key_data.stdout }}" dest="../k8s/dev/certificate/pronto_world_client_key_data"

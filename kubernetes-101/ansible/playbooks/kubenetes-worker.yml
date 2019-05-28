@@ -1,0 +1,15 @@
+---
+- name: get token
+  hosts: k8s-master
+  roles:
+    - kubernetes_create_token
+
+- name: join kubernetes cluster
+  hosts: k8s-worker
+  vars:
+    hostname: "demo-worker"
+    token: "{{ hostvars[groups['k8s-master'][0]]['token_join_cluster']['stdout'] }}"
+  roles:
+    - set_hostname
+    - kubernetes_install
+    - kubernetes_join_cluster

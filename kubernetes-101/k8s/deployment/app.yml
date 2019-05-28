@@ -1,0 +1,135 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: app
+  namespace: dev
+spec:
+  selector:
+    pod: app
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: static-assets-pvc
+  namespace: dev
+  labels:
+    type: dev
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  volumeName: static-assets-pv
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: static-media-pvc
+  namespace: dev
+  labels:
+    type: dev
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  volumeName: static-media-pv
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: logs-pvc
+  namespace: dev
+  labels:
+    type: dev
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  volumeName: logs-pv
+
+---
+
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: app
+  namespace: dev
+  labels:
+    name: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pod: app
+  template:
+    metadata:
+      labels:
+        pod: app
+    spec:
+      containers:
+        - name: app
+          image: 133506877714.dkr.ecr.eu-west-1.amazonaws.com/pronto-dashboard:{{COMMIT}}
+          command: ["/entrypoint.sh"]
+          ports:
+          - containerPort: 8000
+          env:
+            - name: DATABASE_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: env-secrets
+                  key: DATABASE_NAME
+
+            - name: DATABASE_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: env-secrets
+                  key: DATABASE_USER
+
+            - name: DATABASE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: env-secrets
+                  key: DATABASE_HOST
+
+            - name: DATABASE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: env-secrets
+                  key: DATABASE_PORT
+
+          volumeMounts:
+            - name: static-assets
+              mountPath: /app/assets
+            - name: static-media
+              mountPath: /app/media
+            - name: logs
+              mountPath: /app/pronto_dashboard/logs
+
+      volumes:
+        - name: static-assets
+          persistentVolumeClaim:
+            claimName: static-assets-pvc
+        - name: static-media
+          persistentVolumeClaim:
+            claimName: static-media-pvc
+        - name: logs
+          persistentVolumeClaim:
+            claimName: logs-pvc
+        - name: aws-credentials
+          configMap:
+            name: aws-credentials-config

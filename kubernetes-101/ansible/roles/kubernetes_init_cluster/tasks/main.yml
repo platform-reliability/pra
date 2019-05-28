@@ -1,0 +1,19 @@
+---
+- name: kubernetes init cluster
+  command: bash -c "sudo kubeadm init --apiserver-cert-extra-sans={{ IP_master }}"
+
+- name: create directory .kube
+  command: bash -c "sudo mkdir -p $HOME/.kube"
+
+- name: copy config to .kube
+  command: bash -c "sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config"
+
+- name: change owner ./kube
+  command: bash -c "sudo chown $(id -u):$(id -g) $HOME/.kube/config"
+
+- name: get version kubectl encrypt base64
+  command: bash -c "kubectl version | base64 | tr -d '\n'"
+  register: kubectl_version
+
+- name: set pod network
+  command: bash -c "kubectl apply -f 'https://cloud.weave.works/k8s/net?k8s-version={{ kubectl_version.stdout }}'"

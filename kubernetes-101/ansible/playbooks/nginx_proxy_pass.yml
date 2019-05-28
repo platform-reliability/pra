@@ -1,0 +1,5 @@
+---
+- name: run nginx proxy
+  hosts: k8s-master
+  roles:
+    - nginx_proxy

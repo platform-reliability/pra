@@ -1,0 +1,50 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: thorkube
+#   thought of as a tagging mechanism
+  labels:
+    name: app
+spec:
+  replicas: 1
+  selector:
+  # matchLabels field describes what pods the deployment should apply to.
+    matchLabels:
+        pod: app
+  template:
+    metadata:
+    # labels field indicates what labels should be assigned to the running pod.
+    # This label is what is found by the matchLabels field in the deployment.
+        labels:
+            pod: app
+    spec:
+        containers:
+          - name: app
+            image: thorkube:1.1
+            ports:
+              - containerPort: 8000
+            env:
+              - name: POSTGRES_USER
+                valueFrom:
+                  secretKeyRef:
+                    name: postgres-credentials
+                    key: user
+
+              - name: POSTGRES_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: postgres-credentials
+                    key: password
+
+              - name: POSTGRES_HOST
+                value: postgres-service
+
+            volumeMounts:
+              - name: postgres-volume-mount
+                mountPath: /var/lib/busybox
+
+        volumes:
+          - name: postgres-volume-mount
+            persistentVolumeClaim:
+              claimName: postgres-pvc
+

@@ -1,0 +1,4 @@
+---
+- name: Create toket for join cluster kubernetes
+  command: bash -c "kubeadm token create --print-join-command"
+  register: token_join_cluster

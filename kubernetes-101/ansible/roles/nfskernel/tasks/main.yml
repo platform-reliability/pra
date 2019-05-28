@@ -1,0 +1,34 @@
+---
+- name: Install nfs kernel server
+  apt: name=nfs-kernel-server
+
+- name: mkdir db
+  file:
+    path: /var/docker/db
+    state: directory
+
+- name: mkdir assets
+  file:
+    path: /var/docker/static/assets
+    state: directory
+
+- name: mkdir media
+  file:
+    path: /var/docker/static/media
+    state: directory
+
+- name: mkdir logs
+  file:
+    path: /var/docker/logs
+    state: directory
+
+- name: copy export file
+  copy:
+    src: "nfs-exports"
+    dest: /etc/exports
+
+- name: create nfs table
+  command: bash -c "sudo exportfs -a"
+
+- name: start nfs-kernel-server
+  command: bash -c "sudo service nfs-kernel-server start"

@@ -1,0 +1,4 @@
+/var/docker/db            *(rw,sync,no_subtree_check,no_root_squash)
+/var/docker/static/assets *(rw,sync,no_subtree_check,no_root_squash)
+/var/docker/static/media  *(rw,sync,no_subtree_check,no_root_squash)
+/var/docker/logs *(rw,sync,no_subtree_check,no_root_squash)

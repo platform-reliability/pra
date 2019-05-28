@@ -1,0 +1,3 @@
+---
+- name: Join cluster kubernetes
+  command: bash -c "sudo {{ token }}"

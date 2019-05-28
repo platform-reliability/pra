@@ -1,0 +1,21 @@
+kind: Deployment
+apiVersion: apps/v1beta2
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-container
+  template:
+    metadata:
+      labels:
+        app: nginx-container
+    spec:
+      containers:
+        - name: nginx-container
+          image: sea-nginx:1.0
+          ports:
+            - containerPort: 80
+
+

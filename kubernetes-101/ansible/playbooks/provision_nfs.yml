@@ -1,0 +1,9 @@
+---
+- name: provision nfs server
+  hosts: nfs
+  become: True
+  vars:
+    hostname: "nfs-demo"
+  roles:
+    - nfskernel
+    - set_hostname
